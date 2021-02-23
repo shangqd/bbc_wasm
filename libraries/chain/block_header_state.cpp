@@ -55,7 +55,7 @@ namespace eosio { namespace chain {
       result.timestamp                                       = when;
       result.confirmed                                       = num_prev_blocks_to_confirm;
       result.active_schedule_version                         = active_schedule.version;
-      result.prev_activated_protocol_features                = activated_protocol_features;
+      //result.prev_activated_protocol_features                = activated_protocol_features;
 
       result.block_signing_key                               = prokey.block_signing_key;
       result.producer                                        = prokey.producer_name;
@@ -181,13 +181,13 @@ namespace eosio { namespace chain {
       h.action_mroot      = action_mroot;
       h.schedule_version  = active_schedule_version;
       h.new_producers     = std::move(new_producers);
-
+      /*
       if( new_protocol_feature_activations.size() > 0 ) {
          h.header_extensions.emplace_back(
             protocol_feature_activation::extension_id(),
             fc::raw::pack( protocol_feature_activation{ std::move(new_protocol_feature_activations) } )
          );
-      }
+      }*/
 
       return h;
    }
@@ -212,8 +212,9 @@ namespace eosio { namespace chain {
                     "cannot set new pending producers until last pending is confirmed" );
       }
 
-      protocol_feature_activation_set_ptr new_activated_protocol_features;
+      //protocol_feature_activation_set_ptr new_activated_protocol_features;
 
+      /*
       auto exts = h.validate_and_extract_header_extensions();
       {
          if( exts.size() > 0 ) {
@@ -227,7 +228,7 @@ namespace eosio { namespace chain {
          } else {
             new_activated_protocol_features = std::move( prev_activated_protocol_features );
          }
-      }
+      }*/
 
       auto block_number = block_num;
 
@@ -236,7 +237,7 @@ namespace eosio { namespace chain {
       result.id      = h.id();
       result.header  = h;
 
-      result.header_exts = std::move(exts);
+      //result.header_exts = std::move(exts);
 
       if( h.new_producers ) {
          result.pending_schedule.schedule            = *h.new_producers;
@@ -252,7 +253,7 @@ namespace eosio { namespace chain {
          result.pending_schedule.schedule_lib_num    = prev_pending_schedule.schedule_lib_num;
       }
 
-      result.activated_protocol_features = std::move( new_activated_protocol_features );
+      //result.activated_protocol_features = std::move( new_activated_protocol_features );
 
       return result;
    }
@@ -329,16 +330,7 @@ namespace eosio { namespace chain {
                   ("block_signing_key", block_signing_key)( "signee", signee ) );
    }
 
-   /**
-    *  Reference cannot outlive *this. Assumes header_exts is not mutated after instatiation.
-    */
-   const vector<digest_type>& block_header_state::get_new_protocol_feature_activations()const {
-      static const vector<digest_type> no_activations{};
-
-      if( header_exts.size() == 0 || !header_exts.front().contains<protocol_feature_activation>() )
-         return no_activations;
-
-      return header_exts.front().get<protocol_feature_activation>().protocol_features;
-   }
+   //const vector<digest_type>& block_header_state::get_new_protocol_feature_activations() const {
+      
 
 } } /// namespace eosio::chain

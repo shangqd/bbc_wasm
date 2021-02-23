@@ -122,7 +122,7 @@ namespace eosio { namespace chain {
             public:
                template<typename T>
                void add_row( const T& row, const chainbase::database& db ) {
-                  _writer.write_row(detail::make_row_writer(detail::snapshot_row_traits<T>::to_snapshot_row(row, db)));
+//                  _writer.write_row(detail::make_row_writer(detail::snapshot_row_traits<T>::to_snapshot_row(row, db)));
                }
 
             private:
@@ -245,7 +245,7 @@ namespace eosio { namespace chain {
                   auto temp = typename detail::snapshot_row_traits<T>::snapshot_type();
                   auto reader = detail::make_row_reader(temp);
                   bool result = _reader.read_row(reader);
-                  detail::snapshot_row_traits<T>::from_snapshot_row(std::move(temp), out, db);
+//                  detail::snapshot_row_traits<T>::from_snapshot_row(std::move(temp), out, db);
                   return result;
                }
 

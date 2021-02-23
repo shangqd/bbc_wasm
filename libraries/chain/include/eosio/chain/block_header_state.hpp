@@ -28,7 +28,7 @@ namespace detail {
 }
 
 struct pending_block_header_state : public detail::block_header_state_common {
-   protocol_feature_activation_set_ptr  prev_activated_protocol_features;
+   //protocol_feature_activation_set_ptr  prev_activated_protocol_features;
    detail::schedule_info                prev_pending_schedule;
    bool                                 was_pending_promoted = false;
    block_id_type                        previous;
@@ -70,7 +70,7 @@ struct block_header_state : public detail::block_header_state_common {
    block_id_type                        id;
    signed_block_header                  header;
    detail::schedule_info                pending_schedule;
-   protocol_feature_activation_set_ptr  activated_protocol_features;
+   //protocol_feature_activation_set_ptr  activated_protocol_features;
 
    /// this data is redundant with the data stored in header, but it acts as a cache that avoids
    /// duplication of work
@@ -101,7 +101,7 @@ struct block_header_state : public detail::block_header_state_common {
    public_key_type      signee()const;
    void                 verify_signee(const public_key_type& signee)const;
 
-   const vector<digest_type>& get_new_protocol_feature_activations()const;
+   //const vector<digest_type>& get_new_protocol_feature_activations()const;
 };
 
 using block_header_state_ptr = std::shared_ptr<block_header_state>;
@@ -130,5 +130,4 @@ FC_REFLECT_DERIVED(  eosio::chain::block_header_state, (eosio::chain::detail::bl
                      (id)
                      (header)
                      (pending_schedule)
-                     (activated_protocol_features)
 )

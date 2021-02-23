@@ -131,7 +131,7 @@ namespace eosio { namespace chain {
                      s.trxs.push_back( std::make_shared<transaction_metadata>( std::make_shared<packed_transaction>(pt) ) );
                   }
                }
-               s.header_exts = s.block->validate_and_extract_header_extensions();
+               //s.header_exts = s.block->validate_and_extract_header_extensions();
                my->add( std::make_shared<block_state>( move( s ) ), false, true, validator );
             }
             block_id_type head_id;
@@ -315,8 +315,8 @@ namespace eosio { namespace chain {
             const auto& exts = n->header_exts;
 
             if( exts.size() > 0 ) {
-               const auto& new_protocol_features = exts.front().get<protocol_feature_activation>().protocol_features;
-               validator( n->header.timestamp, prev_bh->activated_protocol_features->protocol_features, new_protocol_features );
+               //const auto& new_protocol_features = exts.front().get<protocol_feature_activation>().protocol_features;
+               //validator( n->header.timestamp, prev_bh->activated_protocol_features->protocol_features, new_protocol_features );
             }
          } EOS_RETHROW_EXCEPTIONS( fork_database_exception, "serialized fork database is incompatible with configured protocol features"  )
       }

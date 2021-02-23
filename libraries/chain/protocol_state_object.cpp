@@ -24,7 +24,7 @@ namespace eosio { namespace chain {
             res.preactivated_protocol_features.emplace_back( v );
          }
 
-         res.whitelisted_intrinsics = convert_intrinsic_whitelist_to_set( value.whitelisted_intrinsics );
+//         res.whitelisted_intrinsics = convert_intrinsic_whitelist_to_set( value.whitelisted_intrinsics );
 
          res.num_supported_key_types = value.num_supported_key_types;
 
@@ -48,7 +48,7 @@ namespace eosio { namespace chain {
             value.preactivated_protocol_features.emplace_back( v );
          }
 
-         reset_intrinsic_whitelist( value.whitelisted_intrinsics, row.whitelisted_intrinsics );
+//         reset_intrinsic_whitelist( value.whitelisted_intrinsics, row.whitelisted_intrinsics );
 
          value.num_supported_key_types = row.num_supported_key_types;
       }

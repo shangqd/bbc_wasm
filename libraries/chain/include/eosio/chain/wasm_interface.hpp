@@ -47,7 +47,7 @@ namespace eosio { namespace chain {
                            ("module",mod_name)("export",export_name) );
 
                // Only consider imports that are in the whitelisted set of intrinsics
-               fail = !is_intrinsic_whitelisted( *whitelisted_intrinsics, export_name );
+               //fail = !is_intrinsic_whitelisted( *whitelisted_intrinsics, export_name );
             }
 
             // Try to resolve an intrinsic first.
