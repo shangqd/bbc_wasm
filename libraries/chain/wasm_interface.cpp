@@ -25,8 +25,7 @@
 #include <fstream>
 #include <string.h>
 
-extern eosio::chain::apply_context *c;
-
+//eosio::chain::apply_context *c;
 std::vector<uint8_t> parse_initial_memory(const Module& module) {
          std::vector<uint8_t> mem_image;
 
@@ -48,11 +47,12 @@ std::vector<uint8_t> parse_initial_memory(const Module& module) {
       }
 
 
+extern eosio::chain::apply_context *c;
+
 void shang_test1()
       {
          char *p = new char[1088];
          c = (eosio::chain::apply_context *)p;
-
          using namespace wabt;
          using namespace wabt::interp;
          using namespace IR;

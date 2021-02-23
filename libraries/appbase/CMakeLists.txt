@@ -75,4 +75,4 @@ install( TARGETS
 )
 install_directory_permissions( DIRECTORY ${CMAKE_INSTALL_FULL_INCLUDEDIR}/appbase )
 
-#add_subdirectory( examples )
+add_subdirectory( examples )
