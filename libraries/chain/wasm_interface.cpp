@@ -16,12 +16,9 @@
 #include <fc/exception/exception.hpp>
 #include <fc/crypto/sha256.hpp>
 #include <fc/crypto/sha1.hpp>
-#include <fc/io/raw.hpp>
 
 #include <softfloat.hpp>
 #include <compiler_builtins.hpp>
-#include <boost/asio.hpp>
-#include <boost/bind.hpp>
 #include <fstream>
 #include <string.h>
 
