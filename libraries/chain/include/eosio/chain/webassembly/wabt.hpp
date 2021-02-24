@@ -1,30 +1,32 @@
 #pragma once
 
 #include <eosio/chain/webassembly/common.hpp>
-#include <eosio/chain/webassembly/runtime_interface.hpp>
-#include <eosio/chain/exceptions.hpp>
-#include <eosio/chain/apply_context.hpp>
+//#include <eosio/chain/webassembly/runtime_interface.hpp>
+//#include <eosio/chain/exceptions.hpp>
+//#include <eosio/chain/apply_context.hpp>
+
 #include <softfloat_types.h>
 
 //wabt includes
 #include <src/binary-reader.h>
 #include <src/common.h>
 #include <src/interp.h>
+#include "IR/Types.h"
 
 namespace eosio { namespace chain { namespace webassembly { namespace wabt_runtime {
 
-using namespace fc;
+//using namespace fc;
 using namespace wabt;
 using namespace wabt::interp;
-using namespace eosio::chain::webassembly::common;
+//using namespace eosio::chain::webassembly::common;
 
 struct wabt_apply_instance_vars {
    Memory* memory;
    apply_context& ctx;
 
    char* get_validated_pointer(uint32_t offset, uint32_t size) {
-      EOS_ASSERT(memory, wasm_execution_error, "access violation");
-      EOS_ASSERT(offset + size <= memory->data.size() && offset + size >= offset, wasm_execution_error, "access violation");
+      //EOS_ASSERT(memory, wasm_execution_error, "access violation");
+      //EOS_ASSERT(offset + size <= memory->data.size() && offset + size >= offset, wasm_execution_error, "access violation");
       return memory->data.data() + offset;
    }
 };
@@ -43,10 +45,12 @@ struct intrinsic_registrator {
    };
 
    intrinsic_registrator(const char* mod, const char* name, const FuncSignature& sig, intrinsic_fn fn) {
+      printf("intrinsic_registrator %s.%s \n",mod,name);
       get_map()[string(mod)][string(name)] = intrinsic_func_info{sig, fn};
    }
 };
 
+/*
 class wabt_runtime : public eosio::chain::wasm_runtime_interface {
    public:
       wabt_runtime();
@@ -57,6 +61,7 @@ class wabt_runtime : public eosio::chain::wasm_runtime_interface {
    private:
       wabt::ReadBinaryOptions read_binary_options;  //note default ctor will look at each option in feature.def and default to DISABLED for the feature
 };
+*/
 
 /**
  * class to represent an in-wasm-memory array
@@ -68,7 +73,7 @@ class wabt_runtime : public eosio::chain::wasm_runtime_interface {
 template<typename T>
 inline array_ptr<T> array_ptr_impl (wabt_apply_instance_vars& vars, uint32_t ptr, uint32_t length)
 {
-   EOS_ASSERT( length < INT_MAX/(uint32_t)sizeof(T), binaryen_exception, "length will overflow" );
+   //EOS_ASSERT( length < INT_MAX/(uint32_t)sizeof(T), binaryen_exception, "length will overflow" );
    return array_ptr<T>((T*)(vars.get_validated_pointer(ptr, length * (uint32_t)sizeof(T))));
 }
 
@@ -83,8 +88,8 @@ inline null_terminated_ptr null_terminated_ptr_impl(wabt_apply_instance_vars& va
    while(p < top_of_memory)
       if(*p++ == '\0')
          return null_terminated_ptr(value);
-
-   FC_THROW_EXCEPTION(wasm_execution_error, "unterminated string");
+   return null_terminated_ptr(nullptr);
+   //FC_THROW_EXCEPTION(wasm_execution_error, "unterminated string");
 }
 
 
@@ -98,10 +103,12 @@ struct is_reference_from_value<name> {
    static constexpr bool value = true;
 };
 
+
 template<>
 struct is_reference_from_value<fc::time_point_sec> {
    static constexpr bool value = true;
 };
+
 
 template<typename T>
 constexpr bool is_reference_from_value_v = is_reference_from_value<T>::value;
@@ -194,8 +201,8 @@ inline auto convert_native_to_literal(const wabt_apply_instance_vars&, const nam
 
 inline auto convert_native_to_literal(const wabt_apply_instance_vars& vars, char* ptr) {
    const char* base = vars.memory->data.data();
-   const char* top_of_memory = base + vars.memory->data.size();
-   EOS_ASSERT(ptr >= base && ptr < top_of_memory, wasm_execution_error, "returning pointer not in linear memory");
+   //const char* top_of_memory = base + vars.memory->data.size();
+   //EOS_ASSERT(ptr >= base && ptr < top_of_memory, wasm_execution_error, "returning pointer not in linear memory");
    Value v;
    v.i32 = (int)(ptr - base);
    return TypedValue(Type::I32, v);
@@ -374,7 +381,9 @@ struct intrinsic_invoker_impl<Ret, std::tuple<array_ptr<T>, size_t, Inputs...>> 
       T* base = array_ptr_impl<T>(vars, ptr, length);
       if ( reinterpret_cast<uintptr_t>(base) % alignof(T) != 0 ) {
          if(vars.ctx.control.contracts_console())
-            wlog( "misaligned array of const values" );
+         {
+            //wlog( "misaligned array of const values" );
+         }
          std::vector<std::remove_const_t<T> > copy(length > 0 ? length : 1);
          T* copy_ptr = &copy[0];
          memcpy( (void*)copy_ptr, (void*)base, length * sizeof(T) );
@@ -391,7 +400,9 @@ struct intrinsic_invoker_impl<Ret, std::tuple<array_ptr<T>, size_t, Inputs...>> 
       T* base = array_ptr_impl<T>(vars, ptr, length);
       if ( reinterpret_cast<uintptr_t>(base) % alignof(T) != 0 ) {
          if(vars.ctx.control.contracts_console())
-            wlog( "misaligned array of values" );
+         {
+            //wlog( "misaligned array of values" );
+         }
          std::vector<std::remove_const_t<T> > copy(length > 0 ? length : 1);
          T* copy_ptr = &copy[0];
          memcpy( (void*)copy_ptr, (void*)base, length * sizeof(T) );
@@ -505,7 +516,9 @@ struct intrinsic_invoker_impl<Ret, std::tuple<T *, Inputs...>> {
       T* base = array_ptr_impl<T>(vars, ptr, 1);
       if ( reinterpret_cast<uintptr_t>(base) % alignof(T) != 0 ) {
          if(vars.ctx.control.contracts_console())
-            wlog( "misaligned const pointer" );
+         {
+            //wlog( "misaligned const pointer" );
+         }
          std::remove_const_t<T> copy;
          T* copy_ptr = &copy;
          memcpy( (void*)copy_ptr, (void*)base, sizeof(T) );
@@ -520,7 +533,9 @@ struct intrinsic_invoker_impl<Ret, std::tuple<T *, Inputs...>> {
       T* base = array_ptr_impl<T>(vars, ptr, 1);
       if ( reinterpret_cast<uintptr_t>(base) % alignof(T) != 0 ) {
          if(vars.ctx.control.contracts_console())
-            wlog( "misaligned pointer" );
+         {
+            //wlog( "misaligned pointer" );
+         }
          T copy;
          memcpy( (void*)&copy, (void*)base, sizeof(T) );
          Ret ret = Then(vars, &copy, rest..., args, (uint32_t)offset - 1);
@@ -606,11 +621,13 @@ struct intrinsic_invoker_impl<Ret, std::tuple<T &, Inputs...>> {
    static auto translate_one(wabt_apply_instance_vars& vars, Inputs... rest, const TypedValues& args, int offset) -> std::enable_if_t<std::is_const<U>::value, Ret> {
       // references cannot be created for null pointers
       uint32_t ptr = args.at((uint32_t)offset).get_i32();
-      EOS_ASSERT(ptr != 0, binaryen_exception, "references cannot be created for null pointers");
+      //EOS_ASSERT(ptr != 0, binaryen_exception, "references cannot be created for null pointers");
       T* base = array_ptr_impl<T>(vars, ptr, 1);
       if ( reinterpret_cast<uintptr_t>(base) % alignof(T) != 0 ) {
          if(vars.ctx.control.contracts_console())
-            wlog( "misaligned const reference" );
+         {
+            //wlog( "misaligned const reference" );
+         }
          std::remove_const_t<T> copy;
          T* copy_ptr = &copy;
          memcpy( (void*)copy_ptr, (void*)base, sizeof(T) );
@@ -623,11 +640,13 @@ struct intrinsic_invoker_impl<Ret, std::tuple<T &, Inputs...>> {
    static auto translate_one(wabt_apply_instance_vars& vars, Inputs... rest, const TypedValues& args, int offset) -> std::enable_if_t<!std::is_const<U>::value, Ret> {
       // references cannot be created for null pointers
       uint32_t ptr = args.at((uint32_t)offset).get_i32();
-      EOS_ASSERT(ptr != 0, binaryen_exception, "references cannot be created for null pointers");
+      //EOS_ASSERT(ptr != 0, binaryen_exception, "references cannot be created for null pointers");
       T* base = array_ptr_impl<T>(vars, ptr, 1);
       if ( reinterpret_cast<uintptr_t>(base) % alignof(T) != 0 ) {
          if(vars.ctx.control.contracts_console())
-            wlog( "misaligned reference" );
+         {
+            //wlog( "misaligned reference" );
+         }
          T copy;
          memcpy( (void*)&copy, (void*)base, sizeof(T) );
          Ret ret = Then(vars, copy, rest..., args, (uint32_t)offset - 1);

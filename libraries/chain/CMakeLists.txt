@@ -7,53 +7,48 @@ file(GLOB HEADERS "include/eosio/chain/*.hpp"
 
 ## SORT .cpp by most likely to change / break compile
 add_library( eosio_chain
-             merkle.cpp
-             name.cpp
-             transaction.cpp
-             block_header.cpp
-             block_header_state.cpp
-             block_state.cpp
-             fork_database.cpp
-             controller.cpp
-             authorization_manager.cpp
-             resource_limits.cpp
-             block_log.cpp
-             transaction_context.cpp
-             eosio_contract.cpp
-             eosio_contract_abi.cpp
-             chain_config.cpp
-             chain_id_type.cpp
-             genesis_state.cpp
-             ${CMAKE_CURRENT_BINARY_DIR}/genesis_state_root_key.cpp
-
+#             merkle.cpp
+#             name.cpp
+#             transaction.cpp
+#             block_header.cpp
+#             block_header_state.cpp
+#             block_state.cpp
+#             fork_database.cpp
+#             controller.cpp
+#             authorization_manager.cpp
+#             resource_limits.cpp
+#             block_log.cpp
+#             transaction_context.cpp
+#             eosio_contract.cpp
+#             eosio_contract_abi.cpp
+#             chain_config.cpp
+#             chain_id_type.cpp
+#             genesis_state.cpp
+#             ${CMAKE_CURRENT_BINARY_DIR}/genesis_state_root_key.cpp
 #             chain_config.cpp
 #             block_trace.cpp
-              wast_to_wasm.cpp
-              wasm_interface.cpp
+#              wast_to_wasm.cpp
+#              wasm_interface.cpp
               shang_test.cpp
-              wasm_eosio_validation.cpp
-              wasm_eosio_injection.cpp
-              apply_context.cpp
-              abi_serializer.cpp
-              asset.cpp
-              snapshot.cpp
-
-             webassembly/wavm.cpp
-             webassembly/wabt.cpp
-
+#              wasm_eosio_validation.cpp
+#              wasm_eosio_injection.cpp
+#              apply_context.cpp
+#              abi_serializer.cpp
+#              asset.cpp
+#              snapshot.cpp
+#             webassembly/wavm.cpp
+#             webassembly/wabt.cpp
 #             get_config.cpp
-#
 #             contracts/chain_initializer.cpp
-
-             trace.cpp
-             transaction_metadata.cpp
-             protocol_state_object.cpp
-             protocol_feature_activation.cpp
-             protocol_feature_manager.cpp
-             genesis_intrinsics.cpp
-             whitelisted_intrinsics.cpp
-             thread_utils.cpp
-             ${HEADERS}
+#             trace.cpp
+#             transaction_metadata.cpp
+#             protocol_state_object.cpp
+#             protocol_feature_activation.cpp
+#             protocol_feature_manager.cpp
+#             genesis_intrinsics.cpp
+#             whitelisted_intrinsics.cpp
+#             thread_utils.cpp
+#             ${HEADERS}
              )
 
 target_link_libraries( eosio_chain fc chainbase Logging IR WAST WASM Runtime

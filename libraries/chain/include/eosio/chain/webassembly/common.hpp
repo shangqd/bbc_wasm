@@ -1,11 +1,11 @@
 #pragma once
 
-#include <eosio/chain/wasm_interface.hpp>
-#include <eosio/chain/wasm_eosio_constraints.hpp>
-
+//#include <eosio/chain/wasm_interface.hpp>
+//#include <eosio/chain/wasm_eosio_constraints.hpp>
+#include <type_traits>
 #define EOSIO_INJECTED_MODULE_NAME "eosio_injection"
 
-using namespace fc;
+//using namespace fc;
 
 namespace eosio { namespace chain { 
 

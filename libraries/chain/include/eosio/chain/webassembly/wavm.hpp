@@ -1,9 +1,10 @@
 #pragma once
-
+#include <string.h>
 #include <eosio/chain/webassembly/common.hpp>
-#include <eosio/chain/exceptions.hpp>
-#include <eosio/chain/webassembly/runtime_interface.hpp>
-#include <eosio/chain/apply_context.hpp>
+//#include <eosio/chain/exceptions.hpp>
+//#include <eosio/chain/webassembly/runtime_interface.hpp>
+//#include <eosio/chain/apply_context.hpp>
+
 #include <softfloat.hpp>
 #include "Runtime/Runtime.h"
 #include "IR/Types.h"
@@ -13,6 +14,7 @@ namespace eosio { namespace chain { namespace webassembly { namespace wavm {
 
 using namespace IR;
 using namespace Runtime;
+/*
 using namespace fc;
 using namespace eosio::chain::webassembly::common;
 
@@ -24,6 +26,7 @@ class wavm_runtime : public eosio::chain::wasm_runtime_interface {
 
       void immediately_exit_currently_running_module() override;
 };
+*/
 
 //This is a temporary hack for the single threaded implementation
 struct running_instance_context {
@@ -123,6 +126,7 @@ template<>
 struct native_to_wasm<bool> {
    using type = I32;
 };
+
 template<>
 struct native_to_wasm<const name &> {
    using type = I64;
@@ -131,6 +135,7 @@ template<>
 struct native_to_wasm<name> {
    using type = I64;
 };
+
 template<>
 struct native_to_wasm<const fc::time_point_sec &> {
    using type = I32;
@@ -220,6 +225,7 @@ template<>
 struct wasm_to_rvalue_type<void> {
    static constexpr auto value = ResultType::none;
 };
+
 template<>
 struct wasm_to_rvalue_type<const name&> {
    static constexpr auto value = ResultType::i64;
@@ -239,7 +245,6 @@ struct wasm_to_rvalue_type<fc::time_point_sec> {
    static constexpr auto value = ResultType::i32;
 };
 
-
 template<typename T>
 constexpr auto wasm_to_rvalue_type_v = wasm_to_rvalue_type<T>::value;
 
@@ -253,6 +258,7 @@ struct is_reference_from_value<name> {
    static constexpr bool value = true;
 };
 
+
 template<>
 struct is_reference_from_value<fc::time_point_sec> {
    static constexpr bool value = true;
@@ -260,7 +266,6 @@ struct is_reference_from_value<fc::time_point_sec> {
 
 template<typename T>
 constexpr bool is_reference_from_value_v = is_reference_from_value<T>::value;
-
 
 
 struct void_type {
@@ -388,7 +393,9 @@ struct intrinsic_invoker_impl<Ret, std::tuple<array_ptr<T>, size_t, Inputs...>, 
       T* base = array_ptr_impl<T>(ctx, (U32)ptr, length);
       if ( reinterpret_cast<uintptr_t>(base) % alignof(T) != 0 ) {
          if(ctx.apply_ctx->control.contracts_console())
-            wlog( "misaligned array of const values" );
+         {
+            //wlog( "misaligned array of const values" );
+         }
          std::vector<std::remove_const_t<T> > copy(length > 0 ? length : 1);
          T* copy_ptr = &copy[0];
          memcpy( (void*)copy_ptr, (void*)base, length * sizeof(T) );
@@ -404,7 +411,9 @@ struct intrinsic_invoker_impl<Ret, std::tuple<array_ptr<T>, size_t, Inputs...>, 
       T* base = array_ptr_impl<T>(ctx, (U32)ptr, length);
       if ( reinterpret_cast<uintptr_t>(base) % alignof(T) != 0 ) {
          if(ctx.apply_ctx->control.contracts_console())
-            wlog( "misaligned array of values" );
+         {
+            //wlog( "misaligned array of values" );
+         }
          std::vector<std::remove_const_t<T> > copy(length > 0 ? length : 1);
          T* copy_ptr = &copy[0];
          memcpy( (void*)copy_ptr, (void*)base, length * sizeof(T) );
@@ -516,7 +525,9 @@ struct intrinsic_invoker_impl<Ret, std::tuple<T *, Inputs...>, std::tuple<Transl
       T* base = array_ptr_impl<T>(ctx, (U32)ptr, 1);
       if ( reinterpret_cast<uintptr_t>(base) % alignof(T) != 0 ) {
          if(ctx.apply_ctx->control.contracts_console())
-            wlog( "misaligned const pointer" );
+         {
+            //wlog( "misaligned const pointer" );
+         }
          std::remove_const_t<T> copy;
          T* copy_ptr = &copy;
          memcpy( (void*)copy_ptr, (void*)base, sizeof(T) );
@@ -530,7 +541,9 @@ struct intrinsic_invoker_impl<Ret, std::tuple<T *, Inputs...>, std::tuple<Transl
       T* base = array_ptr_impl<T>(ctx, (U32)ptr, 1);
       if ( reinterpret_cast<uintptr_t>(base) % alignof(T) != 0 ) {
          if(ctx.apply_ctx->control.contracts_console())
-            wlog( "misaligned pointer" );
+         {
+            //wlog( "misaligned pointer" );
+         }
          std::remove_const_t<T> copy;
          T* copy_ptr = &copy;
          memcpy( (void*)copy_ptr, (void*)base, sizeof(T) );
@@ -556,6 +569,7 @@ struct intrinsic_invoker_impl<Ret, std::tuple<T *, Inputs...>, std::tuple<Transl
  * @tparam Inputs - the remaining native parameters to transcribe
  * @tparam Translated - the list of transcribed wasm parameters
  */
+
 template<typename Ret, typename... Inputs, typename ...Translated>
 struct intrinsic_invoker_impl<Ret, std::tuple<const name&, Inputs...>, std::tuple<Translated...>> {
    using next_step = intrinsic_invoker_impl<Ret, std::tuple<Inputs...>, std::tuple<Translated..., native_to_wasm_t<const name&> >>;
@@ -590,14 +604,16 @@ struct intrinsic_invoker_impl<Ret, std::tuple<T &, Inputs...>, std::tuple<Transl
    template<then_type Then, typename U=T>
    static auto translate_one(running_instance_context& ctx, Inputs... rest, Translated... translated, I32 ptr) -> std::enable_if_t<std::is_const<U>::value, Ret> {
       // references cannot be created for null pointers
-      EOS_ASSERT((U32)ptr != 0, wasm_exception, "references cannot be created for null pointers");
+      //EOS_ASSERT((U32)ptr != 0, wasm_exception, "references cannot be created for null pointers");
       MemoryInstance* mem = ctx.memory;
       if(!mem || (U32)ptr+sizeof(T) >= IR::numBytesPerPage*Runtime::getMemoryNumPages(mem))
          Runtime::causeException(Exception::Cause::accessViolation);
       T &base = *(T*)(getMemoryBaseAddress(mem)+(U32)ptr);
       if ( reinterpret_cast<uintptr_t>(&base) % alignof(T) != 0 ) {
          if(ctx.apply_ctx->control.contracts_console())
-            wlog( "misaligned const reference" );
+         {
+            //wlog( "misaligned const reference" );
+         }
          std::remove_const_t<T> copy;
          T* copy_ptr = &copy;
          memcpy( (void*)copy_ptr, (void*)&base, sizeof(T) );
@@ -609,14 +625,16 @@ struct intrinsic_invoker_impl<Ret, std::tuple<T &, Inputs...>, std::tuple<Transl
    template<then_type Then, typename U=T>
    static auto translate_one(running_instance_context& ctx, Inputs... rest, Translated... translated, I32 ptr) -> std::enable_if_t<!std::is_const<U>::value, Ret> {
       // references cannot be created for null pointers
-      EOS_ASSERT((U32)ptr != 0, wasm_exception, "reference cannot be created for null pointers");
+      //EOS_ASSERT((U32)ptr != 0, wasm_exception, "reference cannot be created for null pointers");
       MemoryInstance* mem = ctx.memory;
       if(!mem || (U32)ptr+sizeof(T) >= IR::numBytesPerPage*Runtime::getMemoryNumPages(mem))
          Runtime::causeException(Exception::Cause::accessViolation);
       T &base = *(T*)(getMemoryBaseAddress(mem)+(U32)ptr);
       if ( reinterpret_cast<uintptr_t>(&base) % alignof(T) != 0 ) {
          if(ctx.apply_ctx->control.contracts_console())
-            wlog( "misaligned reference" );
+         {
+            //wlog( "misaligned reference" );
+         }
          std::remove_const_t<T> copy;
          T* copy_ptr = &copy;
          memcpy( (void*)copy_ptr, (void*)&base, sizeof(T) );
