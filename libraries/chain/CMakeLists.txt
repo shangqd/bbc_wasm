@@ -50,7 +50,6 @@ add_library( eosio_chain
 #             thread_utils.cpp
 #             ${HEADERS}
              )
-
 target_link_libraries( eosio_chain chainbase Logging IR WAST WASM Runtime
                        softfloat builtins wabt
                      )

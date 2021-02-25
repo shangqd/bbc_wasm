@@ -1,13 +1,17 @@
 #pragma once
 #include <eosio/chain/block_timestamp.hpp>
 #include <eosio/chain/producer_schedule.hpp>
-#include <eosio/chain/protocol_feature_activation.hpp>
+//#include <eosio/chain/protocol_feature_activation.hpp>
 
 #include <type_traits>
 
 namespace eosio { namespace chain {
+   struct protocol_feature_activation
+   {
 
+   };
    namespace detail {
+   
       template<typename... Ts>
       struct block_header_extension_types {
          using block_header_extensions_t = fc::static_variant< Ts... >;
@@ -59,7 +63,6 @@ namespace eosio { namespace chain {
       uint32_t          block_num() const { return num_from_id(previous) + 1; }
       static uint32_t   num_from_id(const block_id_type& id);
 
-      vector<block_header_extensions> validate_and_extract_header_extensions()const;
    };
 
 

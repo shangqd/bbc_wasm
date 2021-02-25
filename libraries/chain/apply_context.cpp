@@ -14,8 +14,6 @@
 
 using boost::container::flat_set;
 
-eosio::chain::apply_context *c = nullptr;
-
 namespace eosio { namespace chain {
 
 static inline void print_debug(account_name receiver, const action_trace& ar) {
@@ -45,15 +43,6 @@ apply_context::apply_context(controller& con, transaction_context& trx_ctx, uint
 ,idx_double(*this)
 ,idx_long_double(*this)
 {
-   
-   //static int a = 0;
-   //if (a == 0)
-   {
-      c = this;// new apply_context(con,trx_ctx,action_ordinal);
-      // this;
-   }
-   //a++;
-
    action_trace& trace = trx_ctx.get_action_trace(action_ordinal);
    act = &trace.act;
    receiver = trace.receiver;

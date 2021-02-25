@@ -188,7 +188,7 @@ class incremental_merkle_impl {
 
                // calculate the partially realized node value by implying the "right" value is identical
                // to the "left" value
-               top = DigestType::hash(make_canonical_pair(top, top));
+               //top = DigestType::hash(make_canonical_pair(top, top));
                partial = true;
             } else {
                // we are collapsing from a "right" value and an fully-realized "left"
@@ -204,7 +204,7 @@ class incremental_merkle_impl {
                }
 
                // calculate the node
-               top = DigestType::hash(make_canonical_pair(left_value, top));
+               //top = DigestType::hash(make_canonical_pair(left_value, top));
             }
 
             // move up a level in the tree
