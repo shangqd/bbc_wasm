@@ -45,7 +45,7 @@ struct intrinsic_registrator {
    };
 
    intrinsic_registrator(const char* mod, const char* name, const FuncSignature& sig, intrinsic_fn fn) {
-      printf("intrinsic_registrator %s.%s \n",mod,name);
+      //printf("intrinsic_registrator %s.%s \n",mod,name);
       get_map()[string(mod)][string(name)] = intrinsic_func_info{sig, fn};
    }
 };

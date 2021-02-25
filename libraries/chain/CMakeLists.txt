@@ -29,7 +29,7 @@ add_library( eosio_chain
 #             block_trace.cpp
 #              wast_to_wasm.cpp
 #              wasm_interface.cpp
-              shang_test.cpp
+            bbc.cpp
 #              wasm_eosio_validation.cpp
 #              wasm_eosio_injection.cpp
 #              apply_context.cpp
@@ -51,7 +51,7 @@ add_library( eosio_chain
 #             ${HEADERS}
              )
 
-target_link_libraries( eosio_chain fc chainbase Logging IR WAST WASM Runtime
+target_link_libraries( eosio_chain chainbase Logging IR WAST WASM Runtime
                        softfloat builtins wabt
                      )
 target_include_directories( eosio_chain
