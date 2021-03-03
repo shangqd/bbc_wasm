@@ -1061,11 +1061,6 @@ REGISTER_INTRINSICS(memory_api,
 
 }}
 
-void shang()
-{
-   printf("bbc test OK \n");
-}
-
 #include <fstream>
 #include <string.h>
 #include <sys/stat.h>
@@ -1205,7 +1200,7 @@ void shang_test1()
    using namespace Runtime;
 
    IR::Module module;
-   const char *f = "/home/shang/shangqd/eosio.contracts/build/contracts/eosio.token/eosio.token.wasm";
+   const char *f = "../eosio.token.wasm";
    struct stat statbuf;
    stat(f,&statbuf);
    std::ifstream inFile(f,std::ios::in|std::ios::binary);
